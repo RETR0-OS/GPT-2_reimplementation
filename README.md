@@ -1,4 +1,3 @@
-
 # LLM from Scratch: Educational Transformer Implementation
 
 This repository provides a detailed, modular implementation of a Large Language Model (LLM) from scratch, inspired by architectures like GPT-2. The code is designed for students and researchers to understand the mathematics, dimensionality, and engineering behind transformer-based models. Each module is explained in depth, with references to the underlying theory and practical considerations.
@@ -12,33 +11,31 @@ This repository provides a detailed, modular implementation of a Large Language 
 3. [Getting Started](#getting-started)
 4. [Usage](#usage)
 5. [Detailed Concepts & Mathematics](#detailed-concepts--mathematics)
-    - [Feedforward Layer](#feedforward-layer)
-    - [GeLU Activation](#gelu-activation)
-    - [Layer Normalization](#layer-normalization)
-    - [Positional Encoding](#positional-encoding)
-    - [Token Embeddings](#token-embeddings)
-    - [Attention Mechanisms](#attention-mechanisms)
-    - [Shortcut Connections](#shortcut-connections)
-    - [Tokenizer](#tokenizer)
-    - [Data Loader](#data-loader)
+
+   * [Feedforward Layer](#feedforward-layer)
+   * [GeLU Activation](#gelu-activation)
+   * [Layer Normalization](#layer-normalization)
+   * [Positional Encoding](#positional-encoding)
+   * [Token Embeddings](#token-embeddings)
+   * [Attention Mechanisms](#attention-mechanisms)
+   * [Shortcut Connections](#shortcut-connections)
+   * [Tokenizer](#tokenizer)
+   * [Data Loader](#data-loader)
 6. [Customization](#customization)
 7. [License](#license)
 8. [Acknowledgements](#acknowledgements)
 
 ---
 
-
 ## Features
 
-- Modular transformer blocks with clear separation of concerns
-- Multiple attention mechanisms (self, causal, multi-head, Bahdanau)
-- Custom tokenizer and embedding layers
-- Layer normalization and GeLU activation
-- Data loader for text datasets
-- Example datasets (`hamlet.txt`, `the_verdict.txt`)
-- PyTorch-based for extensibility and GPU support
-
-
+* Modular transformer blocks with clear separation of concerns
+* Multiple attention mechanisms (self, causal, multi-head, Bahdanau)
+* Custom tokenizer and embedding layers
+* Layer normalization and GeLU activation
+* Data loader for text datasets
+* Example datasets (`hamlet.txt`, `the_verdict.txt`)
+* PyTorch-based for extensibility and GPU support
 
 ## Project Structure
 
@@ -78,25 +75,24 @@ data/                    # Sample datasets
     the_verdict.txt
 ```
 
-
-
 ## Getting Started
 
 ### Prerequisites
 
-- Python 3.8+
-- [PyTorch](https://pytorch.org/)
+* Python 3.8+
+* [PyTorch](https://pytorch.org/)
 
 Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
+
 or, if using `pyproject.toml`:
+
 ```bash
 pip install .
 ```
-
 
 ## Usage
 
@@ -115,64 +111,64 @@ uv run model_test.py
 
 You can modify `model.py` or modify the components in `custom_llm/components` to experiment with different model configurations and components.
 
-
-
 ## Detailed Concepts & Mathematics
-
-Below, each major file and concept is explained in detail, including the mathematics and dimensionality involved.
 
 ### Feedforward Layer (`concepts/feedforward_layer.py`, `components/feedforward_network.py`)
 
 Implements the fully connected layers in the transformer block. The feedforward network typically consists of two linear transformations with a non-linearity (GeLU) in between:
 
-$$
+```math
 \text{FFN}(x) = \max(0, xW_1 + b_1)W_2 + b_2
-$$
+```
 
-- **Input Dimensionality:** (batch_size, seq_len, d_model)
-- **Hidden Layer:** (batch_size, seq_len, d_ff)
-- **Output:** (batch_size, seq_len, d_model)
+* **Input Dimensionality:** `(batch_size, seq_len, d_model)`
+* **Hidden Layer:** `(batch_size, seq_len, d_ff)`
+* **Output:** `(batch_size, seq_len, d_model)`
 
 ### GeLU Activation (`concepts/GeLU.py`, `components/gelu.py`)
 
 Implements the Gaussian Error Linear Unit:
 
-$$
+```math
 \text{GeLU}(x) = x \cdot \Phi(x)
-$$
+```
+
 where $\Phi(x)$ is the cumulative distribution function of the standard normal distribution. GeLU is smoother than ReLU and helps with gradient flow.
 
 ### Layer Normalization (`concepts/layer_norm.py`, `components/layer_normalizing.py`)
 
 Normalizes the inputs across the features for each token:
 
-$$
+```math
 \text{LayerNorm}(x) = \frac{x - \mu}{\sigma} \cdot \gamma + \beta
-$$
+```
+
 where $\mu$ and $\sigma$ are the mean and standard deviation across the last dimension, and $\gamma$, $\beta$ are learnable parameters.
 
 ### Positional Encoding (`concepts/positional_encoding.py`, `components/positional_emdedding.py`)
 
 Adds information about token position using sinusoidal functions:
 
-$$
-PE_{(pos, 2i)} = \sin(pos / 10000^{2i/d_{model}})
-$$
-$$
-PE_{(pos, 2i+1)} = \cos(pos / 10000^{2i/d_{model}})
-$$
+```math
+PE_{(pos, 2i)} = \sin\left(\frac{pos}{10000^{2i/d_{model}}}\right)
+```
 
-- **Input:** (seq_len, d_model)
-- **Output:** (seq_len, d_model)
+```math
+PE_{(pos, 2i+1)} = \cos\left(\frac{pos}{10000^{2i/d_{model}}}\right)
+```
+
+* **Input:** `(seq_len, d_model)`
+* **Output:** `(seq_len, d_model)`
 
 ### Token Embeddings (`concepts/token_embeddings.py`, `components/embedding_layer.py`)
 
 Maps token indices to dense vectors:
 
-$$
+```math
 \text{Embedding}(x) = W[x]
-$$
-where $W$ is the embedding matrix of shape (vocab_size, d_model).
+```
+
+where $W$ is the embedding matrix of shape `(vocab_size, d_model)`.
 
 ### Attention Mechanisms (`attention/`, `components/multi_head_attention.py`, `components/transformer_block.py`)
 
@@ -180,25 +176,26 @@ where $W$ is the embedding matrix of shape (vocab_size, d_model).
 
 Calculates attention scores for each token with respect to all others:
 
-$$
+```math
 \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
-$$
+```
 
-- **Q, K, V Dimensionality:** (batch_size, seq_len, d_model)
-- **Output:** (batch_size, seq_len, d_model)
+* **Q, K, V Dimensionality:** `(batch_size, seq_len, d_model)`
+* **Output:** `(batch_size, seq_len, d_model)`
 
 #### Multi-Head Attention (`attention/multi_head_attention.py`, `components/multi_head_attention.py`)
 
 Splits the model into multiple heads to learn different representations:
 
-$$
+```math
 \text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, ..., \text{head}_h)W^O
-$$
-where each head computes its own attention.
+```
 
-- **Heads:** $h$
-- **Each Head:** (batch_size, seq_len, d_k)
-- **Output:** (batch_size, seq_len, d_model)
+Each head computes its own attention.
+
+* **Heads:** $h$
+* **Each Head:** `(batch_size, seq_len, d_k)`
+* **Output:** `(batch_size, seq_len, d_model)`
 
 #### Causal Attention (`attention/causal_attention.py`)
 
@@ -216,9 +213,10 @@ Splits weights for each head for efficiency and clarity.
 
 Implements residual connections:
 
-$
+```math
 \text{Output} = \text{Layer}(x) + x
-$
+```
+
 Helps with gradient flow and stabilizes training.
 
 ### Tokenizer (`concepts/tokenizer.py`, `components/tokenizer.py`)
@@ -233,23 +231,20 @@ Loads and batches text data for training. Handles padding, batching, and shuffli
 
 ## Customization
 
-- Add new layers or attention mechanisms in the `concepts/` or `attention/` folders.
-- Use your own text data by placing files in the `data/` directory and updating the data loader.
-- Adjust hyperparameters and model architecture in `main.py` and `custom_llm/model.py`.
+* Add new layers or attention mechanisms in the `concepts/` or `attention/` folders.
+* Use your own text data by placing files in the `data/` directory and updating the data loader.
+* Adjust hyperparameters and model architecture in `main.py` and `custom_llm/model.py`.
 
 ---
-
 
 ## License
 
 This project is for educational purposes. See LICENSE for details.
 
-
-
 ## Acknowledgements
 
-- Inspired by OpenAI GPT-2 and transformer architectures.
-- Thanks to the PyTorch community for open-source tools and documentation.
+* Inspired by OpenAI GPT-2 and transformer architectures.
+* Thanks to the PyTorch community for open-source tools and documentation.
 
 ---
 
