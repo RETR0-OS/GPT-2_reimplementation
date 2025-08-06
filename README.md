@@ -216,9 +216,9 @@ Splits weights for each head for efficiency and clarity.
 
 Implements residual connections:
 
-$$
+$
 \text{Output} = \text{Layer}(x) + x
-$$
+$
 Helps with gradient flow and stabilizes training.
 
 ### Tokenizer (`concepts/tokenizer.py`, `components/tokenizer.py`)
