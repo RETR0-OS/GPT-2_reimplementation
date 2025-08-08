@@ -2,13 +2,13 @@ import torch
 from components.tokenizer import BytePairTokenizer
 from model import CustomLLM
 
-def print_sample(model, prompt, ctx_len, tokenizer, device, max_new_tokens=100):
+def print_sample(model, prompt, ctx_len, tokenizer, device, max_new_tokens=100, temperature=0.3):
     model.eval()
     input_ids = torch.tensor(tokenizer.encode(prompt)).unsqueeze(0).to(device)
     
     for _ in range(max_new_tokens):
         output = model(input_ids[-ctx_len:])
-        logits = output[:, -1, :]
+        logits = output[:, -1, :] / temperature  # Apply temperature scaling
         probs = torch.softmax(logits, dim=-1)
         next_token = torch.multinomial(probs, num_samples=1)
         input_ids = torch.cat((input_ids, next_token), dim=1)
