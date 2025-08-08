@@ -58,7 +58,7 @@ def calc_loss_loader(dataloader, model, device, num_batches=None):
             break
     return total_loss / num_batches if num_batches > 0 else float('nan')
 
-def print_sample(model, input_text, tokenizer, device, max_new_tokens=50, temperature=0.3):
+def print_sample(model, input_text, tokenizer, device, max_new_tokens=50, temperature=0.3, top_k=30):
     """Generate and print a sample text using the model."""
     model.eval()
     with torch.no_grad():
@@ -68,7 +68,13 @@ def print_sample(model, input_text, tokenizer, device, max_new_tokens=50, temper
             # Get predictions
             logits = model(context_tokens)
             # Get the logits for the last position
-            logits = logits[:, -1, :] / temperature
+
+            top_logits, pos_mask = torch.topk(logits[:, -1, :], k=top_k)
+            
+            out_tensor = torch.full_like(logits, fill_value=-torch.inf, device=device, requires_grad=False)
+            out_tensor.scatter_(1, pos_mask, top_logits)
+
+            logits = out_tensor / temperature
             # Apply softmax to get probabilities
             probs = torch.softmax(logits, dim=-1)
             # Sample the next token
